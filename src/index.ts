@@ -1,4 +1,5 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, dialog } from 'electron';
+import fs from 'fs';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: any;
@@ -8,9 +9,11 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
+let mainWindow: BrowserWindow;
+
 const createWindow = (): void => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
 
@@ -26,8 +29,16 @@ const createWindow = (): void => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
+   // Emitted when the window is closed.
+  mainWindow.on('closed', function () {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    mainWindow = null
+  })
+
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  app.isPackaged || mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
@@ -54,3 +65,85 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+const isMac = process.platform === 'darwin'
+
+const template = [
+  // { role: 'appMenu' }
+  ...(isMac ? [{
+    label: app.name,
+    submenu: [
+      { role: 'about' },
+      { type: 'separator' },
+      { role: 'services' },
+      { type: 'separator' },
+      { role: 'hide' },
+      { role: 'hideothers' },
+      { role: 'unhide' },
+      { type: 'separator' },
+      { role: 'quit' }
+    ]
+  }] : []),
+  // { role: 'fileMenu' }
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Open File',
+        accelerator: 'CmdOrCtrl+O',
+        click() {
+          openFile();
+        }
+      },
+      isMac ? { role: 'close' } : { role: 'quit' }
+    ]
+  },
+  // { role: 'viewMenu' }
+  {
+    label: 'View',
+    submenu: [
+      { role: 'reload' },
+      { role: 'forceReload' },
+      ...(app.isPackaged ? [{ role: 'toggleDevTools' }] : []),
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
+    ]
+  },
+  {
+    role: 'help',
+    submenu: [
+      {
+        label: 'Learn More',
+        click: async () => {
+          const { shell } = require('electron')
+          await shell.openExternal('https://github.com/edumudu/tundra-player')
+        }
+      }
+    ]
+  }
+]
+
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
+
+// Open File
+function openFile() {
+  const files = dialog.showOpenDialogSync(mainWindow, {
+    properties: ['openFile'],
+    filters: [{ name: 'Videos', extensions: ['mp4', 'webm'] }]
+  })
+
+  if(!files) return;
+
+  const [filePath] = files;
+  const file = fs.readFileSync(filePath);
+
+  if(!file) return;
+
+  // console.log(URL.createObjectURL(file));
+  mainWindow.webContents.send('fileOpened', file);
+
+ipcMain.on('toggleFullScreen', () => mainWindow.setFullScreen(!mainWindow.isFullScreen()));
+ipcMain.on('hideWindow', () => mainWindow.hide());
+ipcMain.on('showWindow', () => mainWindow.show());
+}

@@ -1,0 +1,70 @@
+.mediaPlayerContainer {
+  position: relative;
+  display: flex;
+  place-content: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+.controlsBar {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: opacity .4s;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px 15px 0;
+  width: 100%;
+  color: #fff;
+}
+
+.controls > div {
+  display: flex;
+  align-items: center;
+}
+
+.mediaTimes {
+  font-size: .8rem;
+}
+
+.mediaTimeSliderWrapper {
+  width: 100%;
+  display: flex;
+  padding: 0 21px;
+  margin-top: -13px;
+}
+
+.mediaVolume {
+  display: flex;
+  align-items: center;
+}
+
+.volumeSlider {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  width: 0;
+  padding: 0;
+  transition: padding .2s, width .2s;
+}
+
+.volumeSliderShow {
+  overflow: initial;
+  padding: 0 20px 0 10px;
+  width: 100px;
+}
