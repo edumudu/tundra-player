@@ -1,0 +1,42 @@
+name: Build Apps
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  built-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set-up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          key: yarn-${{ hashFiles('yarn.lock') }}
+          path: ~/.yarn
+          restore-keys: |
+            yarn-
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile --prefer-offline
+
+      - name: Build Linux Apps
+        run: yarn make:linux
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            out/make/rpm/x64/tundra-player-*.rpm
+            out/make/deb/x64/tundra-player*.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
