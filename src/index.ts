@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, ipcMain, dialog, protocol } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, dialog, protocol, shell } from 'electron';
 import path from 'path';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
@@ -17,7 +17,7 @@ const createWindow = (): void => {
     height: 600,
     width: 800,
     icon: path.join(app.getAppPath(), 'app/resources/icon.png'),
-    title: "Application is currently initializing...",
+    title: 'Application is currently initializing...',
 
     webPreferences: {
       devTools: !app.isPackaged,
@@ -25,8 +25,8 @@ const createWindow = (): void => {
       contextIsolation: true, // protect against prototype pollution
       enableRemoteModule: false, // turn off remote
       // The path is getting file path from inside .webpack folder
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY
-    }
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+    },
   });
 
   // and load the index.html of the app.
@@ -37,8 +37,8 @@ const createWindow = (): void => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
-  })
+    mainWindow = null;
+  });
 
   // Open the DevTools.
   app.isPackaged || mainWindow.webContents.openDevTools();
@@ -78,7 +78,7 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-const isMac = process.platform === 'darwin'
+const isMac = process.platform === 'darwin';
 
 const template = [
   // { role: 'appMenu' }
@@ -93,8 +93,8 @@ const template = [
       { role: 'hideothers' },
       { role: 'unhide' },
       { type: 'separator' },
-      { role: 'quit' }
-    ]
+      { role: 'quit' },
+    ],
   }] : []),
   // { role: 'fileMenu' }
   {
@@ -105,10 +105,10 @@ const template = [
         accelerator: 'CmdOrCtrl+O',
         click() {
           openFile();
-        }
+        },
       },
-      isMac ? { role: 'close' } : { role: 'quit' }
-    ]
+      isMac ? { role: 'close' } : { role: 'quit' },
+    ],
   },
   // { role: 'viewMenu' }
   {
@@ -118,8 +118,8 @@ const template = [
       { role: 'forceReload' },
       ...(app.isPackaged ? [{ role: 'toggleDevTools' }] : []),
       { type: 'separator' },
-      { role: 'togglefullscreen' }
-    ]
+      { role: 'togglefullscreen' },
+    ],
   },
   {
     role: 'help',
@@ -127,23 +127,22 @@ const template = [
       {
         label: 'Learn More',
         click: async () => {
-          const { shell } = require('electron')
-          await shell.openExternal('https://github.com/edumudu/tundra-player')
-        }
-      }
-    ]
-  }
-]
+          await shell.openExternal('https://github.com/edumudu/tundra-player');
+        },
+      },
+    ],
+  },
+];
 
-const menu = Menu.buildFromTemplate(template)
-Menu.setApplicationMenu(menu)
+const menu = Menu.buildFromTemplate(template);
+Menu.setApplicationMenu(menu);
 
 // Open File
 function openFile() {
   const files = dialog.showOpenDialogSync(mainWindow, {
     properties: ['openFile'],
-    filters: [{ name: 'Videos', extensions: ['mp4', 'webm', 'ogg'] }]
-  })
+    filters: [{ name: 'Videos', extensions: ['mp4', 'webm', 'ogg'] }],
+  });
 
   if(!files) return;
 

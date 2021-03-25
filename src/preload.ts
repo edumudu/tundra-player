@@ -11,12 +11,12 @@ contextBridge.exposeInMainWorld(
       }
     },
     receive: (channel: string, func: (...args: any[]) => void) => {
-      const validChannels = ["fileOpened"];
+      const validChannels = ['fileOpened'];
 
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender` 
         ipcRenderer.on(channel, (event, ...args) => func(...args));
       }
-    }
+    },
   }
-)
+);

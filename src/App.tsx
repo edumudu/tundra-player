@@ -14,6 +14,7 @@ export function App() {
   const [fileUrlSrc, setFileUrlSrc] = useState('');
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     /// @ts-ignore
     window.api.receive('fileOpened', (filePath: string) => {
       setFileUrlSrc(`atom:${filePath}`);  
@@ -24,5 +25,5 @@ export function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <MediaPlayer src={fileUrlSrc} />
-    </ThemeProvider>)
+    </ThemeProvider>);
 }
