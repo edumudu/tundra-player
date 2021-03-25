@@ -1,5 +1,5 @@
-import { app, BrowserWindow, Menu, ipcMain, dialog } from 'electron';
-import fs from 'fs';
+import { app, BrowserWindow, Menu, ipcMain, dialog, protocol } from 'electron';
+import path from 'path';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: any;
@@ -16,8 +16,11 @@ const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
+    icon: path.join(app.getAppPath(), 'app/resources/icon.png'),
+    title: "Application is currently initializing...",
 
     webPreferences: {
+      devTools: !app.isPackaged,
       nodeIntegration: false, // is default value after Electron v5
       contextIsolation: true, // protect against prototype pollution
       enableRemoteModule: false, // turn off remote
@@ -44,7 +47,16 @@ const createWindow = (): void => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+
+app.whenReady().then(() => {
+  createWindow();
+
+  protocol.registerFileProtocol('atom', (request, cb) => {
+    const url = request.url.substr(6);
+
+    cb({ path: path.normalize(decodeURI(url)) });
+  });
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -130,20 +142,19 @@ Menu.setApplicationMenu(menu)
 function openFile() {
   const files = dialog.showOpenDialogSync(mainWindow, {
     properties: ['openFile'],
-    filters: [{ name: 'Videos', extensions: ['mp4', 'webm'] }]
+    filters: [{ name: 'Videos', extensions: ['mp4', 'webm', 'ogg'] }]
   })
 
   if(!files) return;
 
   const [filePath] = files;
-  const file = fs.readFileSync(filePath);
 
-  if(!file) return;
+  if(!filePath) return;
 
   // console.log(URL.createObjectURL(file));
-  mainWindow.webContents.send('fileOpened', file);
+  mainWindow.webContents.send('fileOpened', filePath);
+}
 
 ipcMain.on('toggleFullScreen', () => mainWindow.setFullScreen(!mainWindow.isFullScreen()));
 ipcMain.on('hideWindow', () => mainWindow.hide());
 ipcMain.on('showWindow', () => mainWindow.show());
-}

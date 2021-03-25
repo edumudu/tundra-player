@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
@@ -10,9 +11,18 @@ const darkTheme = createMuiTheme({
 });
 
 export function App() {
+  const [fileUrlSrc, setFileUrlSrc] = useState('');
+
+  useEffect(() => {
+    /// @ts-ignore
+    window.api.receive('fileOpened', (filePath: string) => {
+      setFileUrlSrc(`atom:${filePath}`);  
+    });
+  }, []);
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <MediaPlayer />
+      <MediaPlayer src={fileUrlSrc} />
     </ThemeProvider>)
 }

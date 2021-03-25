@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, ChangeEvent, SyntheticEvent, useCallback, useMemo } from 'react';
+import { useRef, useState, useEffect, ChangeEvent, SyntheticEvent, FC } from 'react';
 import { PlayArrow, Pause, VolumeUp, VolumeDown, VolumeMute, VolumeOff, PictureInPicture, Fullscreen, FullscreenExit, Loop, CancelOutlined } from '@material-ui/icons'
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core'
@@ -36,8 +36,12 @@ createStyles({
 }),
 )(InputBase);
 
-export function MediaPlayer() {
-  const media = useRef<HTMLVideoElement>(null);
+export interface MediaPlayerProps {
+  src: string;
+}
+
+export const MediaPlayer: FC<MediaPlayerProps> = ({ src }) => {
+  const media = useRef<HTMLVideoElement>(document.createElement('video'));
   const [isPaused, setIsPaused] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [mediaDuration, setMediaDuration] = useState(0);
@@ -49,21 +53,16 @@ export function MediaPlayer() {
   const [volume, setVolume] = useState(1);
   const [playbackRate, setPlaybackRate] = useState(1);
 
-  const [fileUrlSrc, setFileUrlSrc] = useState('');
-
   useEffect(() => {
     hideControlsBar();
-
-    /// @ts-ignore
-    window.api.receive('fileOpened', (file: Buffer) => {
-      const blob = new Blob([file], { type: 'video/mp4' });
-
-      setFileUrlSrc(URL.createObjectURL(blob))
-    });
   }, []);
 
   useEffect(() => {
-    (media.current as HTMLVideoElement).playbackRate = playbackRate;
+    media.current.load();
+  }, [src]);
+
+  useEffect(() => {
+    media.current.playbackRate = playbackRate;
   }, [playbackRate])
 
   useEffect(() => {
@@ -72,7 +71,7 @@ export function MediaPlayer() {
   }, [isPaused])
 
   useEffect(() => {
-    (media.current as HTMLVideoElement).volume = volume;
+    media.current.volume = volume;
   }, [volume])
 
   const secondsToTime = (totalSeconds: number) => {
@@ -144,28 +143,46 @@ export function MediaPlayer() {
     window.api.send('toggleFullScreen');
   }
 
+  const hasAltOrCrtPressed = (e: KeyboardEvent) => e.ctrlKey || e.altKey;
+
   const shortcutsActions: Record<string, (e: KeyboardEvent) => void> = {
     Space(e) {
       e.preventDefault();
 
-      if(e.ctrlKey || e.altKey) return;
+      if(hasAltOrCrtPressed(e)) return;
 
       playPauseMedia();
     },
 
     ArrowUp(e) {
+      e.preventDefault();
+
+      if(hasAltOrCrtPressed(e)) return;
+
       setVolume(Math.min(1, volume + 0.1));
     },
 
     ArrowDown(e) {
+      e.preventDefault();
+
+      if(hasAltOrCrtPressed(e)) return;
+
       setVolume(Math.max(0, volume - 0.1));
     },
 
     ArrowLeft(e) {
+      e.preventDefault();
+
+      if(hasAltOrCrtPressed(e)) return;
+
       setMediaTime(Math.max(0, currentTime - 0.1));
     },
     
     ArrowRight(e) {
+      e.preventDefault();
+      
+      if(hasAltOrCrtPressed(e)) return;
+
       setMediaTime(Math.min(mediaDuration, currentTime + 0.1));
     }
   }
@@ -188,12 +205,15 @@ export function MediaPlayer() {
         ref={media}
         className={styles.video}
         preload="metadata"
-        src={fileUrlSrc}
         loop={isLooping}
         onEnded={stopMedia}
         onTimeUpdate={onTimeUpdate}
         onLoadedMetadata={handleMetaDataLoad}
-      />
+      >
+        <source src={src} type="video/mp4" />
+        <source src={src} type="video/webm" />
+        <source src={src} type="video/ogg" />
+      </video>
 
       <div
         className={styles.controlsBar}
