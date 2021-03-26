@@ -5,6 +5,7 @@
 *** See the bottom of this document for the declaration of the reference variables
 *** for contributors-url, forks-url, etc.
 -->
+<br />
 <div align="center">
 
   [![Contributors][contributors-shield]][contributors-url]
@@ -24,11 +25,11 @@
     This is a Video player made with electron, react and material-ui.
     <br />
     <br />
-    <a href="https://github.com/edumudu/tundra-player">
+    <a href="https://github.com/edumudu/tundra-player/issues">
       Report Bug
     </a>
     ·
-    <a href="https://github.com/edumudu/tundra-player">
+    <a href="https://github.com/edumudu/tundra-player/issues">
       Request Feature
     </a>
   </p>
@@ -60,7 +61,7 @@ Any suggestions, criticism or help is welcome. Please see the [contribution guid
 
 ## Roadmap
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/edumudu/tundra-player/issues) for a list of proposed features (and known issues).
 
 ## Autor
 
@@ -75,8 +76,8 @@ Made with ❤️ by Eduardo Wesley
 This project is under MIT licence. See the archive [LICENSE](LICENSE) to more details.
 
 ---
-<small align="right">
-  <div>
+<small>
+  <div  align="right">
     Icon made by <a href="https://www.flaticon.com/br/autores/iconixar" title="iconixar">iconixar</a> from <a href="https://www.flaticon.com/br/" title="Flaticon">www.flaticon.com</a>
   </div>
 </small>
@@ -94,12 +95,12 @@ This project is under MIT licence. See the archive [LICENSE](LICENSE) to more de
 [forks-url]: https://github.com/edumudu/tundra-player/network/members
 
 [stars-shield]: https://img.shields.io/github/stars/edumudu/tundra-player?style=flat-square
-[stars-url]: https://github.com/edumudu/tundra-playe/stargazers
+[stars-url]: https://github.com/edumudu/tundra-player/stargazers
 
 [issues-shield]: https://img.shields.io/github/issues-raw/edumudu/tundra-player?style=flat-square
 [issues-url]: https://github.com/edumudu/tundra-player/issues
 
 [license-shield]: https://img.shields.io/github/license/edumudu/tundra-player?style=flat-square
-[license-url]: https://github.com/edumudu/tundra-player/blob/master/LICENSE.txt
+[license-url]: https://github.com/edumudu/tundra-player/blob/master/LICENSE
 
 [product-screenshot]: docs/images/app_screenshot.png
