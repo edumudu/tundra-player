@@ -106,7 +106,10 @@ export const MediaPlayer: FC<MediaPlayerProps> = ({ src }) => {
   };
 
   const handleChange = (_: ChangeEvent<never>, value: number | number[]) => {
-    setMediaTime(Array.isArray(value) ? value[0] : value);
+    const newTime = Array.isArray(value) ? value[0] : value;
+
+    setMediaTime(newTime);
+    setCurrentTime(newTime);
   };
 
   const handleMetaDataLoad = () => {
