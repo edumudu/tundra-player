@@ -77,9 +77,9 @@ export const MediaPlayer: FC<MediaPlayerProps> = ({ src }) => {
 
   const secondsToTime = (totalSeconds: number) => {
     const truncatedSeconds = Math.floor(totalSeconds);
+    const hours = Math.floor(truncatedSeconds / 3_600);
+    const minutes = Math.floor(truncatedSeconds % 3_600 / 60);
     const seconds = truncatedSeconds % 60;
-    const minutes = Math.floor(truncatedSeconds / 60);
-    const hours = Math.floor(minutes / 60);
 
     const padNumber = (n: number) => String(n).padStart(2, '0');
 
