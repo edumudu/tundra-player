@@ -116,7 +116,7 @@ const template = [
     submenu: [
       { role: 'reload' },
       { role: 'forceReload' },
-      ...(app.isPackaged ? [{ role: 'toggleDevTools' }] : []),
+      ...(app.isPackaged ? [] : [{ role: 'toggleDevTools' }]),
       { type: 'separator' },
       { role: 'togglefullscreen' },
     ],
