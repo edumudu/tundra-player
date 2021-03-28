@@ -33,7 +33,7 @@ jobs:
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Update package version
-        run: yarn version ${{ steps.get_version.outputs.VERSION }} --no-git-tag-version
+        run: yarn version --new-version ${{ steps.get_version.outputs.VERSION }} --no-git-tag-version
 
       - name: Build Linux Apps
         run: yarn make:linux
