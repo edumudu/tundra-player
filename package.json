@@ -1,7 +1,7 @@
 {
   "name": "tundra-player",
   "productName": "tundra-player",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A desktop video player built with electron.",
   "author": {
     "name": "Eduardo Wesley Resende",
