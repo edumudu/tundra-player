@@ -11,6 +11,14 @@ import InputBase from '@material-ui/core/InputBase';
 
 import styles from './styles.module.css';
 
+interface VideoElement extends HTMLVideoElement {
+  requestPictureInPicture(): Promise<boolean>;
+}
+
+export interface MediaPlayerProps {
+  src: string;
+}
+
 let showControlsBarTimeout: NodeJS.Timeout;
 
 const allowedPLaybackRates = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4];
@@ -37,12 +45,8 @@ createStyles({
 }),
 )(InputBase);
 
-export interface MediaPlayerProps {
-  src: string;
-}
-
 export const MediaPlayer: FC<MediaPlayerProps> = ({ src }) => {
-  const media = useRef<HTMLVideoElement>(document.createElement('video'));
+  const media = useRef<VideoElement>();
   const [isPaused, setIsPaused] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [mediaDuration, setMediaDuration] = useState(0);
@@ -128,27 +132,17 @@ export const MediaPlayer: FC<MediaPlayerProps> = ({ src }) => {
   };
 
   const requestPictureIn = async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    /// @ts-ignore
     await media.current?.requestPictureInPicture();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    /// @ts-ignore
     document.pictureInPictureElement.addEventListener('leavepictureinpicture', onLeavepictureinpicture);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    /// @ts-ignore
     window.api.send('hideWindow');
   };
 
   const onLeavepictureinpicture = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    /// @ts-ignore
     window.api.send('showWindow');
   };
   
   const toggleFullScreen = async () => {
     setIsFullscreen(!isFullscreen);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    /// @ts-ignore
     window.api.send('toggleFullScreen');
   };
 

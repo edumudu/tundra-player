@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld(
   'api', {
-    send: (channel: string, data: any) => {
+    send: (channel: string, data?: any) => {
       // whitelist channels
       const validChannels = ['toggleFullScreen', 'hideWindow', 'showWindow'];
 
