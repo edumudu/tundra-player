@@ -24,6 +24,6 @@ export function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <MediaPlayer src={fileUrlSrc} />
+      <MediaPlayer src={fileUrlSrc} key={fileUrlSrc} />
     </ThemeProvider>);
 }
