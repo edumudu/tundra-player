@@ -141,7 +141,7 @@ Menu.setApplicationMenu(menu);
 function openFile() {
   const files = dialog.showOpenDialogSync(mainWindow, {
     properties: ['openFile'],
-    filters: [{ name: 'Videos', extensions: ['mp4', 'webm', 'ogg'] }],
+    filters: [{ name: 'Videos', extensions: ['mp4', 'webm', 'ogg', 'mkv'] }],
   });
 
   if(!files) return;
@@ -154,6 +154,5 @@ function openFile() {
   mainWindow.webContents.send('fileOpened', filePath);
 }
 
-ipcMain.on('toggleFullScreen', () => mainWindow.setFullScreen(!mainWindow.isFullScreen()));
 ipcMain.on('hideWindow', () => mainWindow.hide());
 ipcMain.on('showWindow', () => mainWindow.show());

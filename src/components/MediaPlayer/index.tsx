@@ -142,8 +142,12 @@ export const MediaPlayer: FC<MediaPlayerProps> = ({ src }) => {
   };
   
   const toggleFullScreen = async () => {
-    setIsFullscreen(!isFullscreen);
-    window.api.send('toggleFullScreen');
+    const goingToFullScreen = !isFullscreen;
+
+    setIsFullscreen(goingToFullScreen);
+
+    if(document.fullscreenElement) document.exitFullscreen();
+    else document.body.requestFullscreen();
   };
 
   const hasAltOrCrtPressed = (e: KeyboardEvent) => e.ctrlKey || e.altKey;
@@ -187,6 +191,14 @@ export const MediaPlayer: FC<MediaPlayerProps> = ({ src }) => {
       if(hasAltOrCrtPressed(e)) return;
 
       setMediaTime(Math.min(mediaDuration, currentTime + 0.1));
+    },
+
+    Escape(e) {
+      e.preventDefault();
+
+      if(hasAltOrCrtPressed(e) || !isFullscreen) return;
+
+      document.exitFullscreen();
     },
   };
 
