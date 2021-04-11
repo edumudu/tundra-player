@@ -40,6 +40,17 @@ const createWindow = (): void => {
     mainWindow = null;
   });
 
+  mainWindow.webContents.on('did-finish-load', () => {
+    const [, filePath] = process.argv;
+    
+    // Only read file in app init when builded
+    if(app.isPackaged) {
+      const resolvedPath = path.resolve(filePath);
+
+      loadFile(resolvedPath);
+    }
+  });
+
   // Open the DevTools.
   app.isPackaged || mainWindow.webContents.openDevTools();
 };
@@ -78,25 +89,7 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-const isMac = process.platform === 'darwin';
-
-const template = [
-  // { role: 'appMenu' }
-  ...(isMac ? [{
-    label: app.name,
-    submenu: [
-      { role: 'about' },
-      { type: 'separator' },
-      { role: 'services' },
-      { type: 'separator' },
-      { role: 'hide' },
-      { role: 'hideothers' },
-      { role: 'unhide' },
-      { type: 'separator' },
-      { role: 'quit' },
-    ],
-  }] : []),
-  // { role: 'fileMenu' }
+const template: Electron.MenuItemConstructorOptions[] = [
   {
     label: 'File',
     submenu: [
@@ -107,16 +100,14 @@ const template = [
           openFile();
         },
       },
-      isMac ? { role: 'close' } : { role: 'quit' },
     ],
   },
-  // { role: 'viewMenu' }
   {
     label: 'View',
     submenu: [
       { role: 'reload' },
       { role: 'forceReload' },
-      ...(app.isPackaged ? [] : [{ role: 'toggleDevTools' }]),
+      app.isPackaged ? {} : { role: 'toggleDevTools' },
       { type: 'separator' },
       { role: 'togglefullscreen' },
     ],
@@ -141,16 +132,19 @@ Menu.setApplicationMenu(menu);
 function openFile() {
   const files = dialog.showOpenDialogSync(mainWindow, {
     properties: ['openFile'],
-    filters: [{ name: 'Videos', extensions: ['mp4', 'webm', 'ogg', 'mkv'] }],
+    filters: [{ name: 'Videos', extensions: ['mp4', 'webm', 'ogg'] }],
   });
 
   if(!files) return;
-
+  
   const [filePath] = files;
 
+  loadFile(filePath);
+}
+
+function loadFile(filePath: string | undefined) {
   if(!filePath) return;
 
-  // console.log(URL.createObjectURL(file));
   mainWindow.webContents.send('fileOpened', filePath);
 }
 
