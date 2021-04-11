@@ -4,7 +4,7 @@ contextBridge.exposeInMainWorld(
   'api', {
     send: (channel: string, data?: any) => {
       // whitelist channels
-      const validChannels = ['toggleFullScreen', 'hideWindow', 'showWindow'];
+      const validChannels = ['hideWindow', 'showWindow'];
 
       if (validChannels.includes(channel)) {
         ipcRenderer.send(channel, data);
