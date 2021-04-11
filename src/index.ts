@@ -107,7 +107,8 @@ const template: Electron.MenuItemConstructorOptions[] = [
     submenu: [
       { role: 'reload' },
       { role: 'forceReload' },
-      app.isPackaged ? {} : { role: 'toggleDevTools' },
+      // Typescript not recognizing the value of role
+      ...(!app.isPackaged ? [] : [{ role: 'toggleDevTools' } as { role: 'toggleDevTools' }]),
       { type: 'separator' },
       { role: 'togglefullscreen' },
     ],
